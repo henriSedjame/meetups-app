@@ -1,0 +1,8 @@
+input NewMeetUp {
+    name: String!
+    description: String!
+}
+
+type Mutation {
+    createMeetup(input: NewMeetUp): Meetup!
+}

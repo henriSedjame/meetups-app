@@ -1,0 +1,16 @@
+
+type User @goModel(model: "github.com/hsedjame/meetups-app/models.User"){
+    id : ID!
+    username: String!
+    email: String!
+    meetups: [Meetup!]!
+}
+
+type Meetup @goModel(model: "github.com/hsedjame/meetups-app/models.Meetup"){
+    id: ID!
+    name: String!
+    description: String!
+    user: User!
+}
+
+
