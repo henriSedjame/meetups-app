@@ -19,11 +19,14 @@ const defaultPort = "8080"
 
 func main() {
 
+	// get background context
 	ctx := context.Background()
 
-	if pool, err := edge.New(ctx, "edgedb", "edgedb", "XqgNDAkULhmYE5CKcV3H4U3f", 10702); err != nil{
+	// instantiate an edge database pool
+	if pool, err := edge.New(ctx, "edgedb", "edgedb", "XqgNDAkULhmYE5CKcV3H4U3f", 10702); err != nil {
 		log.Fatalf("Fail to connect edgedb database.")
 	} else {
+		// defer the pool close action
 		defer func(pool *edgedb.Pool) {
 			err := pool.Close()
 			if err != nil {
@@ -32,25 +35,30 @@ func main() {
 		}(pool)
 
 		log.Printf("Connection to edgedb success %#v", pool)
+
+		// get port env variable
 		port := os.Getenv("PORT")
 
+		// if port is empty initialize it with the default value
 		if port == "" {
 			port = defaultPort
 		}
+
+		// instantiate repositories
 		userRepo := repositories.UserRepository{Pool: pool}
 		meetupRepo := repositories.MeetupRepository{Pool: pool}
 
+		// init databases
 		initDB(ctx, userRepo)
 
+		// initialize GraphQl server
 		srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &resolvers.Resolver{
 			MeetupRepo: meetupRepo,
-			UserRepo: userRepo,
+			UserRepo:   userRepo,
 		}}))
-
 
 		http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 		http.Handle("/query", srv)
-
 
 		log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 		log.Fatal(http.ListenAndServe(":"+port, nil))

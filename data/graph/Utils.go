@@ -18,12 +18,11 @@ type Predicate = func(string) bool
 // Representation of remplacement of a GraphQl query field name by another one
 //
 // Name : name of the edgdDB entity field tag
-// HasChild: True a the field is a complex type
+// HasChild: True, if the field is a complex type
 type Replacement struct {
-	Name string
+	Name     string
 	HasChild bool
 }
-
 
 // Replace
 // Function type that takes a string and returns a pointer of Replacement
@@ -40,7 +39,7 @@ type Replace = func(string) *Replacement
 //   }
 // }
 //
-func RequestedFields(ctx context.Context,  predicate Predicate, replaceFunc Replace) string {
+func RequestedFields(ctx context.Context, predicate Predicate, replaceFunc Replace) string {
 
 	// Initialize a string builder
 	b := &strings.Builder{}
@@ -62,11 +61,11 @@ func RequestedFields(ctx context.Context,  predicate Predicate, replaceFunc Repl
 func RequestedField(ctx context.Context, field graphql.CollectedField, depth int, builder *strings.Builder, predicate Predicate, replaceFunc Replace) {
 
 	// Retrieve the field name
-	// and initialize a variable hasChild a true
+	// and initialize a variable hasChild at true
 	fieldName := field.Name
-	hasChild  := true
+	hasChild := true
 
-	// If replacement is provided for this field name
+	// If a replacement function is provided for this field name
 	// replace fieldName and hasChild variables
 	if r := replaceFunc(fieldName); r != nil {
 		fieldName = r.Name
@@ -88,7 +87,7 @@ func RequestedField(ctx context.Context, field graphql.CollectedField, depth int
 
 			// Do a recursive call on each sub-fields
 			for _, selection := range fields {
-				RequestedField(ctx, selection, depth+ 1,  builder, predicate, replaceFunc)
+				RequestedField(ctx, selection, depth+1, builder, predicate, replaceFunc)
 			}
 
 			builder.WriteString(strings.Repeat(SPACE, depth))

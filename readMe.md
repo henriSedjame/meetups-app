@@ -1,8 +1,8 @@
-
 #### Init an EdgeDB Project
+
 `edgedb project init`
 
-#### Createmigrations
+#### Create migrations
 
 After define database model in file <i>dbschema/schema.esdl</i> run:
 
